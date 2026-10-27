@@ -2,7 +2,7 @@
 # Download a versioned source tree; runtime and credentials live separately.
 set -Eeuo pipefail
 REPO=https://github.com/SomAThi/claude-workstation.git
-REF=v1.0.0
+REF=v1.0.1
 MODE=AUTO
 usage() { echo 'Usage: sudo bash bootstrap.sh [--ref <full-commit-sha|vX.Y.Z>] [--mode AUTO|LITE|FULL]'; }
 while (($#)); do
