@@ -31,7 +31,7 @@ sudo ./install.sh
 ## После установки
 
 1. Выполните `sudo tailscale up --accept-routes=false --accept-dns=false` и откройте выданную ссылку в своём браузере.
-2. Из каталога исходников выполните `sudo bash scripts/enable-rustdesk.sh`.
+2. Выполните `sudo bash /opt/claude-workstation-current/scripts/enable-rustdesk.sh`.
 3. Получите адрес: `tailscale ip -4`. В RustDesk на Mac подключитесь к этому адресу с `:21118`. Mac должен быть в том же tailnet.
 4. Пароль RustDesk получите в собственном root-терминале из `/var/lib/claude-workstation/rustdesk-password`; пароль Linux workstation — из `/var/lib/claude-workstation/initial-login-password`. Не публикуйте их.
 5. Войдите в Claude через GUI. Настройка разрешённой папки Mac выполняется отдельно по инструкции.

@@ -37,6 +37,11 @@ if [[ $REF =~ ^[0-9a-f]{40}$ && $CW_COMMIT != "$REF" ]]; then echo 'Downloaded c
 printf '%s\n' "$CW_COMMIT" > "$CW_SOURCE/SOURCE_COMMIT"
 echo "Source commit: $CW_COMMIT"
 bash "$CW_SOURCE/install.sh" --mode "$MODE"
+if [[ -e /opt/claude-workstation-current && ! -L /opt/claude-workstation-current ]]; then
+ echo "Source retained at $CW_SOURCE; /opt/claude-workstation-current already exists as a directory."
+else
+ ln -sfn "$CW_SOURCE" /opt/claude-workstation-current
+fi
 echo "Source and next-step scripts: $CW_SOURCE"
 echo "Next: sudo tailscale up --accept-routes=false --accept-dns=false"
 echo "Then: sudo bash $CW_SOURCE/scripts/enable-rustdesk.sh"
