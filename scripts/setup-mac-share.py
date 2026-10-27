@@ -30,12 +30,15 @@ with cred.open('x') as f:f.write(f'username={user}\npassword={password}\n')
 os.chmod(cred,0o600)
 uid=subprocess.check_output(['id','-u','workstation'],text=True).strip();gid=subprocess.check_output(['id','-g','workstation'],text=True).strip()
 host=f'[{ip}]' if a.version==6 else ip
-line=f'//{host}/{share} /mnt/mac-shared cifs credentials={cred},vers=3.1.1,seal,uid={uid},gid={gid},file_mode=0600,dir_mode=0700,nosuid,nodev,noexec,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60,x-systemd.mount-timeout=15 0 0\n'
+line=f'//{host}/{share} /mnt/mac-shared cifs credentials={cred},vers=3,seal,uid={uid},gid={gid},file_mode=0600,dir_mode=0700,nosuid,nodev,noexec,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60,x-systemd.mount-timeout=15 0 0\n'
 backup=config/f'fstab-before-smb-{uuid.uuid4().hex}'
 backup.write_text(original);os.chmod(backup,0o600)
 with fstab.open('a') as f:f.write('\n# Claude Workstation optional tailnet SMB\n'+line)
 subprocess.run(['systemctl','daemon-reload'],check=True)
 subprocess.run(['systemctl','start','mnt-mac\\x2dshared.automount'],check=True)
+result=subprocess.run(['systemctl','start','mnt-mac\\x2dshared.mount'],check=False)
+if result.returncode:
+    raise SystemExit('SMB mount failed. Credentials and the dedicated mount entry have been kept. Check claudeshare is enabled in macOS SMB Options and its password is correct. Inspect the mount journal for the exact cause; do not rerun setup or publish the credentials file.')
 # Reading/writing only a newly created test file, under the non-root account.
 subprocess.run(['runuser','-u','workstation','--','python3','-c',
  'from pathlib import Path; import uuid; p=Path("/mnt/mac-shared")/("cw-test-"+uuid.uuid4().hex+".txt"); p.write_text("test one\\n"); assert p.read_text()=="test one\\n"; p.write_text("test two\\n"); assert p.read_text()=="test two\\n"; print("READ_WRITE_PASS",p)'],check=True)

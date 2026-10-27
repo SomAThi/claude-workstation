@@ -7,7 +7,7 @@
 На новом Ubuntu 24.04 x86_64 скачайте bootstrap из релиза и запустите через sudo. Команда приведена ниже; она автоматически скачает весь репозиторий и установит окружение. Выполняйте её на новом сервере, а не на Mac.
 
 ```bash
-CW_BOOTSTRAP=$(mktemp) && curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/SomAThi/claude-workstation/v1.0.1/bootstrap.sh -o "$CW_BOOTSTRAP" && sudo bash "$CW_BOOTSTRAP" --ref v1.0.1
+CW_BOOTSTRAP=$(mktemp) && curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/SomAThi/claude-workstation/v1.0.2/bootstrap.sh -o "$CW_BOOTSTRAP" && sudo bash "$CW_BOOTSTRAP" --ref v1.0.2
 ```
 
 Требуется curl (на стандартном Ubuntu VPS обычно установлен); при его отсутствии: `sudo apt-get update && sudo apt-get install -y curl`.
@@ -23,7 +23,7 @@ sudo bash /path/to/bootstrap.sh --mode FULL
 
 ```bash
 sudo apt-get update && sudo apt-get install -y git
-git clone --depth 1 --branch v1.0.1 https://github.com/SomAThi/claude-workstation.git
+git clone --depth 1 --branch v1.0.2 https://github.com/SomAThi/claude-workstation.git
 cd claude-workstation
 sudo ./install.sh
 ```
