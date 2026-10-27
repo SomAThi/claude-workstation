@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+node/
+node_modules/
+browser/
+chromium/
+chromium-*/
+*.tar.gz
+*.log
+config.env
+*.credentials

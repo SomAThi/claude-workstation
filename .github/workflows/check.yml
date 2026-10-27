@@ -1,0 +1,26 @@
+name: Installer checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-and-unit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install ShellCheck
+        run: sudo apt-get update -qq && sudo apt-get install -y shellcheck
+      - name: Syntax, ShellCheck and mode-selection tests
+        run: bash tests/static-check.sh
+      - name: Bootstrap help and invalid input
+        run: |
+          bash bootstrap.sh --help
+          if bash bootstrap.sh --ref invalid-ref; then
+            echo 'Invalid ref was accepted'
+            exit 1
+          fi
