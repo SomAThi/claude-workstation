@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 """Optional, interactive root-only SMB setup. Never log credentials."""
-import getpass, ipaddress, os, re, subprocess, uuid
+import getpass, ipaddress, os, re, socket, subprocess, uuid
 from pathlib import Path
 if os.geteuid()!=0:raise SystemExit('Run with sudo from an interactive terminal')
 ip=input('Mac Tailscale IP: ').strip()
 a=ipaddress.ip_address(ip)
 if not any(a in ipaddress.ip_network(n) for n in ['100.64.0.0/10','fd7a:115c:a1e0::/48'] if a.version==ipaddress.ip_network(n).version):raise SystemExit('Only Tailscale IPs accepted')
-subprocess.run(['tailscale','ping','--c','1',ip],check=True)
+# A DERP-relayed pong is valid; a direct UDP path is not required for SMB.
+try:
+    subprocess.run(['tailscale','ping','--until-direct=false','--c','1',ip],check=True,timeout=20)
+    with socket.create_connection((ip,445),timeout=15):
+        pass
+except (OSError, subprocess.SubprocessError) as exc:
+    raise SystemExit('Mac SMB is not reachable over Tailscale. Check Mac is awake, Tailscale is connected, File Sharing is enabled, and TCP 445 is allowed. No credentials or mount settings were changed. ('+type(exc).__name__+')')
+print('SMB_TCP_PASS: Mac file sharing is reachable over Tailscale')
 share=input('SMB share name (e.g. Claude-Shared): ').strip()
 user=input('Dedicated sharing-only Mac username: ').strip()
 if not re.fullmatch(r'[A-Za-z0-9_-]+',share) or not re.fullmatch(r'[A-Za-z0-9_.-]+',user):raise SystemExit('Unsupported share/user characters')
